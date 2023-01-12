@@ -3,7 +3,7 @@
  *
  * (C) 2010/2011 Kevin Roast kevtoast@yahoo.com @kevinroast
  * 
- * Please see: license.txt
+ * Please see: LICENSE.md
  * You are welcome to use this code, but I would appreciate an email or tweet
  * if you do anything interesting with it!
  * 
