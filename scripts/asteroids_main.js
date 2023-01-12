@@ -617,20 +617,6 @@ Asteroids.Colours =
                {
                   localStorage.setItem(SCOREDBKEY, this.game.score);
                }
-               
-               try
-               {
-                  if ($)
-                  {
-                     var score = this.game.score;
-                     // write results to browser
-                     $("#results").html(Game.Util.message("new-high-score") + ": " + score);
-                     // tweet this result link
-                     var tweet = "http://twitter.com/home/?status=I%20scored:%20" + score + "%20-%20in%20the%20Asteroids%20[Reloaded]%20HTML5%20game!%20Try%20your%20skillz...%20http://bit.ly/asteroids%20%23javascript%20%23html5";
-                     $("#tweetlink").attr('href', tweet);
-                     $("#results-wrapper").fadeIn();
-                  }
-               }catch (e){}
             }
          }
          if (interval.framecounter < 300)
