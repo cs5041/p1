@@ -341,7 +341,7 @@ const serialRead = async (port, reader, callback) => {
 
 const serialWrite = async (port, writer, data) => {
     if (port && writer) {
-        await writer.write(data);
+        await writer.write(data + '\n');
     }
 }
 
@@ -779,6 +779,8 @@ const serialWrite = async (port, writer, data) => {
              */
             skipLevel: false,
 
+            lastSend: 0,
+
             /**
              * Scene init event handler
              */
@@ -924,21 +926,24 @@ const serialWrite = async (port, writer, data) => {
              * Scene before rendering event handler
              */
             onBeforeRenderScene: function onBeforeRenderScene() {
-                const outputData = `${this.game.player.vector.x
-                },${this.player.vector.y
-                },${this.player.heading
-                },${this.player.energy
-                },${this.player.shieldCounter
-                },${this.player.bombRecharge
-                },${this.player.thrustRecharge
-                },${this.player.engineThrust
-                },${this.player.alive
-                },${this.game.lives
-                },${this.game.score
-                },${this.game.highscore
-                }`;
-                console.log('output', outputData);
-                serialWrite(this.game.port, this.game.writer, outputData);
+                if ((GameHandler.frameStart - this.lastSend) > 500) {
+                    const outputData = [
+                        ['vx', this.game.player.vector.x],
+                        ['vy', this.player.vector.y],
+                        ['h', this.player.heading],
+                        ['e', this.player.energy],
+                        ['c', this.player.shieldCounter],
+                        ['b', this.player.bombRecharge],
+                        ['a', this.player.alive],
+                        ['l', this.game.lives],
+                        ['s', this.game.score]
+                    ]
+                    outputData.forEach((el) => {
+                        const data = `${el[0]}:${el[1]}`
+                        console.log('output', data);
+                        serialWrite(this.game.port, this.game.writer, data);
+                    });
+                }
                 // handle key input
                 if (this.input.left) {
                     // rotate anti-clockwise
