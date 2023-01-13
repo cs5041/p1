@@ -3,14 +3,14 @@
 
 title=ASTEROIDS
 please-wait=Please wait... Loading Images...
-start=Press SPACE or click to start
+start=Click or tap to start
 author=by Kevin Roast
 instruction1=How to play...
-instruction2=Arrow keys to rotate, thrust, shield. SPACE to fire.
+instruction2=Thrust, rotate, thrust, or shield. Or primary or secondary fire.
 instruction3=Pickup the glowing power-ups to enhance your ship.
 instruction4=Watch out for enemy saucers!
-instruction5=Press S to enable or disable sound.
-instruction6=Press R to switch between Modern and Retro graphics.
+instruction5=
+instruction6=
 high-score=High Score
 game-over=GAME OVER
 new-high-score=New High Score

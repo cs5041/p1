@@ -28,6 +28,7 @@
             height: 100%;
             width: 100%;
         }
+
         body {
             font-family: Segoe UI Light, Arial, Helvetica;
             font-size: 1.1em;
@@ -129,12 +130,23 @@
             position: absolute;
             right: 1em;
         }
+
+        .hidden {
+            display: none;
+        }
+
+        #notSupported {
+            background-color: red;
+        }
     </style>
 </head>
 
 <body>
 <div class="wrapper">
-    <canvas class="box-shadow" id="canvas" width="1024" height=1024"></canvas>
+    <div id="notSupported" class="hidden">Web Serial support not found. Are you using Chrome or Edge on a non-mobile
+        device?
+    </div>
+    <canvas class="box-shadow hidden" id="canvas" width="1024" height=1024"></canvas>
     <div class="info">
         <div class="infopanel box-shadow">
             <div class="title">Asteroids [Reloaded]</div>
