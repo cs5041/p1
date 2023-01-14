@@ -817,7 +817,7 @@ const serialWrite = async (port, writer, data) => {
                         console.log('command', command);
                         switch (command[0].toLowerCase()) {
                             case 't': //thrust
-                                if (parseFloat(command[1]) > 0) {
+                                if (parseFloat(command[1]) !== 0) {
                                     this.input.thrust = parseFloat(command[1]);
                                 } else {
                                     this.input.thrust = false;
