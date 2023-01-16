@@ -296,30 +296,30 @@ if (typeof Game == "undefined" || !Game) {
                 var frameStart = Date.now();
 
                 // Gamepad support - does not support events - probe manually for values
-                if (GameHandler.gamepad && this.sceneIndex !== -1) {
-                    for (var i = 0, pad; i < navigator.getGamepads().length; i++) {
-                        if (pad = navigator.getGamepads()[i]) {
-                            for (var b = 0; b < pad.buttons.length; b++) {
-                                if (pad.buttons[b].pressed) {
-                                    //console.log(b + " := " + pad.buttons[b].pressed);
-                                    GameHandler.gamepadButtons[b] = true;
-                                    this.scenes[this.sceneIndex].onKeyDownHandler(GameHandler.GAMEPAD + b);
-                                }
-                                // deal with button up to ensure orthogonal button press events
-                                else if (GameHandler.gamepadButtons[b]) {
-                                    //console.log(b + " := " + pad.buttons[b].pressed);
-                                    GameHandler.gamepadButtons[b] = false;
-                                    this.scenes[this.sceneIndex].onKeyUpHandler(GameHandler.GAMEPAD + b);
-                                }
-                            }
-                            for (var a = 0; a < pad.axes.length; a++) {
-                                //console.log("axes" + a + " := " + pad.axes[a]);
-                                this.scenes[this.sceneIndex].onAxisHandler(a, pad.axes[a]);
-                            }
-                            break;
-                        }
-                    }
-                }
+                // if (GameHandler.gamepad && this.sceneIndex !== -1) {
+                //     for (var i = 0, pad; i < navigator.getGamepads().length; i++) {
+                //         if (pad = navigator.getGamepads()[i]) {
+                //             for (var b = 0; b < pad.buttons.length; b++) {
+                //                 if (pad.buttons[b].pressed) {
+                //                     //console.log(b + " := " + pad.buttons[b].pressed);
+                //                     GameHandler.gamepadButtons[b] = true;
+                //                     this.scenes[this.sceneIndex].onKeyDownHandler(GameHandler.GAMEPAD + b);
+                //                 }
+                //                 // deal with button up to ensure orthogonal button press events
+                //                 else if (GameHandler.gamepadButtons[b]) {
+                //                     //console.log(b + " := " + pad.buttons[b].pressed);
+                //                     GameHandler.gamepadButtons[b] = false;
+                //                     this.scenes[this.sceneIndex].onKeyUpHandler(GameHandler.GAMEPAD + b);
+                //                 }
+                //             }
+                //             for (var a = 0; a < pad.axes.length; a++) {
+                //                 //console.log("axes" + a + " := " + pad.axes[a]);
+                //                 this.scenes[this.sceneIndex].onAxisHandler(a, pad.axes[a]);
+                //             }
+                //             break;
+                //         }
+                //     }
+                // }
 
                 // calculate scene transition and current scene
                 var currentScene = this.currentScene;

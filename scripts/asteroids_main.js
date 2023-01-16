@@ -328,6 +328,7 @@ const serialRead = async (port, reader, callback) => {
                     break;
                 }
                 if (value) {
+                    console.log('input', data)
                     callback(value);
                 }
             }
@@ -341,6 +342,7 @@ const serialRead = async (port, reader, callback) => {
 
 const serialWrite = async (port, writer, data) => {
     if (port && writer) {
+        console.log('output', data)
         await writer.write(data + '\n');
     }
 }
@@ -620,6 +622,7 @@ const serialWrite = async (port, writer, data) => {
             },
 
             intervalRenderer: function intervalRenderer(interval, ctx) {
+                serialWrite(this.game.port, this.game.writer, 'd:o');
                 if (interval.framecounter++ === 0) {
                     if (this.game.score === this.game.highscore) {
                         // save new high score to HTML5 local storage
@@ -633,6 +636,26 @@ const serialWrite = async (port, writer, data) => {
                     Game.fillText(ctx, Game.Util.message("score") + ": " + this.game.score, "14pt Courier New", GameHandler.width * 0.5 - 64, GameHandler.height * 0.5, "white");
                     if (this.game.score === this.game.highscore) {
                         Game.fillText(ctx, Game.Util.message("new-high-score") + "!", "14pt Courier New", GameHandler.width * 0.5 - 64, GameHandler.height * 0.5 + 24, "white");
+                    }
+                    if (interval.framecounter % 150) {
+
+                        const outputData = [
+                            ['vx', this.game.player.vector.x.toFixed(3)],
+                            ['vy', this.player.vector.y.toFixed(3)],
+                            ['h', this.player.heading.toFixed(3)],
+                            ['e', this.player.energy.toFixed(3)],
+                            ['c', this.player.shieldCounter],
+                            ['b', this.player.bombRecharge],
+                            ['a', this.player.alive ? 1 : 0],
+                            ['l', this.game.lives],
+                            ['s', this.game.score],
+                            ['d', 'o']
+                        ]
+                        outputData.forEach((el) => {
+                            const data = `${el[0]}:${el[1]}`
+                            serialWrite(this.game.port, this.game.writer, data);
+                            this.lastSend = GameHandler.frameStart
+                        });
                     }
                 } else {
                     interval.complete = true;
@@ -683,6 +706,25 @@ const serialWrite = async (port, writer, data) => {
                     Game.fillText(ctx, Game.Util.message("score") + ": " + this.game.score, "14pt Courier New", GameHandler.width * 0.5 - 64, GameHandler.height * 0.5, "white");
                     if (this.game.score === this.game.highscore) {
                         Game.fillText(ctx, Game.Util.message("new-high-score") + "!", "14pt Courier New", GameHandler.width * 0.5 - 64, GameHandler.height * 0.5 + 24, "white");
+                    }
+                    if (interval.framecounter % 150) {
+                        const outputData = [
+                            ['vx', this.game.player.vector.x.toFixed(3)],
+                            ['vy', this.player.vector.y.toFixed(3)],
+                            ['h', this.player.heading.toFixed(3)],
+                            ['e', this.player.energy.toFixed(3)],
+                            ['c', this.player.shieldCounter],
+                            ['b', this.player.bombRecharge],
+                            ['a', this.player.alive ? 1 : 0],
+                            ['l', this.game.lives],
+                            ['s', this.game.score],
+                            ['d', 'c']
+                        ]
+                        outputData.forEach((el) => {
+                            const data = `${el[0]}:${el[1]}`
+                            serialWrite(this.game.port, this.game.writer, data);
+                            this.lastSend = GameHandler.frameStart
+                        });
                     }
                 } else {
                     interval.complete = true;
@@ -811,14 +853,13 @@ const serialWrite = async (port, writer, data) => {
                 this.interval.reset();
                 this.skipLevel = false;
                 serialRead(this.game.port, this.game.reader, (value) => {
-                    console.log('input', value);
                     const command = value.split(":").map((el) => el.trim().toLowerCase());
                     if (command.length === 2) {
-                        console.log('command', command);
                         switch (command[0].toLowerCase()) {
                             case 't': //thrust
-                                if (parseFloat(command[1]) !== 0) {
-                                    this.input.thrust = parseFloat(command[1]);
+                                const t = parseFloat(command[1]);
+                                if (!isNaN(t) && t !== 0) {
+                                    this.input.thrust = t;
                                 } else {
                                     this.input.thrust = false;
                                 }
@@ -838,7 +879,10 @@ const serialWrite = async (port, writer, data) => {
                                 }
                                 break;
                             case 'h': //heading
-                                this.player.heading = parseFloat(command[1]);
+                                const h = parseFloat(command[1])
+                                if (!isNaN(h)) {
+                                    this.player.heading = h;
+                                }
                                 break;
                             case 'e': //teleport
                                 if (command[1] === '1') {
@@ -873,22 +917,40 @@ const serialWrite = async (port, writer, data) => {
                                 }
                                 break;
                             case 'vx': //absolute vector x
-                                this.player.vector.x = parseFloat(command[1]);
+                                const vx = parseFloat(command[1]);
+                                if (!isNaN(vx)) {
+                                    this.player.vector.x = vx;
+                                }
                                 break;
                             case 'vy': //absolute vector y
-                                this.player.vector.y = parseFloat(command[1]);
+                                const vy = parseFloat(command[1]);
+                                if (!isNaN(vy)) {
+                                    this.player.vector.y = vy;
+                                }
                                 break;
                             case 'px': //absolute position x
-                                this.player.position.x = parseFloat(command[1]);
+                                const px = parseFloat(command[1]);
+                                if (!isNaN(px)) {
+                                    this.player.position.x = px;
+                                }
                                 break;
                             case 'py': //absolute position y
-                                this.player.position.y = parseFloat(command[1]);
+                                const py = parseFloat(command[1]);
+                                if (!isNaN(py)) {
+                                    this.player.position.y = py;
+                                }
                                 break;
                             case 'wr': // weapon recharge factor
-                                this.player.weaponRechargeFactor = parseFloat(command[1]);
+                                const wr = parseFloat(command[1]);
+                                if (!isNaN(wr)) {
+                                    this.player.weaponRechargeFactor = wr;
+                                }
                                 break;
                             case 'er': // energy recharge factor
-                                this.player.energyRechargeFactor = parseFloat(command[1]);
+                                const er = parseFloat(command[1]);
+                                if (!isNaN(er)) {
+                                    this.player.energyRechargeFactor = er;
+                                }
                                 break;
                         }
                     }
@@ -920,28 +982,31 @@ const serialWrite = async (port, writer, data) => {
                     fireA = false;
                     fireB = false;
                 }
+
+                this.lastSend = 0;
             },
 
             /**
              * Scene before rendering event handler
              */
             onBeforeRenderScene: function onBeforeRenderScene() {
-                if ((GameHandler.frameStart - this.lastSend) > 500) {
+                if (Math.abs(GameHandler.frameStart - this.lastSend) > 1000) {
                     const outputData = [
-                        ['vx', this.game.player.vector.x],
-                        ['vy', this.player.vector.y],
-                        ['h', this.player.heading],
-                        ['e', this.player.energy],
+                        ['vx', this.game.player.vector.x.toFixed(3)],
+                        ['vy', this.player.vector.y.toFixed(3)],
+                        ['h', this.player.heading.toFixed(3)],
+                        ['e', this.player.energy.toFixed(3)],
                         ['c', this.player.shieldCounter],
                         ['b', this.player.bombRecharge],
-                        ['a', this.player.alive],
+                        ['a', this.player.alive ? 1 : 0],
                         ['l', this.game.lives],
-                        ['s', this.game.score]
+                        ['s', this.game.score],
+                        ['d', 'g']
                     ]
                     outputData.forEach((el) => {
                         const data = `${el[0]}:${el[1]}`
-                        console.log('output', data);
                         serialWrite(this.game.port, this.game.writer, data);
+                        this.lastSend = GameHandler.frameStart
                     });
                 }
                 // handle key input
@@ -1093,12 +1158,12 @@ const serialWrite = async (port, writer, data) => {
 
                     // special keys - key press state not maintained between frames
 
-                    case GameHandler.KEY.R: {
-                        // switch rendering modes
-                        BITMAPS = !BITMAPS;
-                        return true;
-                        break;
-                    }
+                    // case GameHandler.KEY.R: {
+                    //     // switch rendering modes
+                    //     BITMAPS = !BITMAPS;
+                    //     return true;
+                    //     break;
+                    // }
 
                     case GameHandler.KEY.S: {
                         GameHandler.soundEnabled = !GameHandler.soundEnabled;
@@ -1200,85 +1265,85 @@ const serialWrite = async (port, writer, data) => {
              * Handle Gamepad API axis input
              */
             onAxisHandler: function onAxisHandler(axis, delta) {
-                switch (axis) {
-                    case 0:  // left/right axis
-                    {
-                        switch (Math.round(delta)) {
-                            case 0:  // return to center
-                            {
-                                // clear left/right events
-                                this.input.left = this.input.right = false;
-                                break;
-                            }
-                            case 1:  // right
-                            {
-                                this.input.right = true;
-                                break;
-                            }
-                            case -1: // left
-                            {
-                                this.input.left = true;
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
+                // switch (axis) {
+                //     case 0:  // left/right axis
+                //     {
+                //         switch (Math.round(delta)) {
+                //             case 0:  // return to center
+                //             {
+                //                 // clear left/right events
+                //                 this.input.left = this.input.right = false;
+                //                 break;
+                //             }
+                //             case 1:  // right
+                //             {
+                //                 this.input.right = true;
+                //                 break;
+                //             }
+                //             case -1: // left
+                //             {
+                //                 this.input.left = true;
+                //                 break;
+                //             }
+                //         }
+                //         break;
+                //     }
+                // }
             },
 
             touches: [],
 
             onTouchStartHandler: function onTouchStartHandler(event) {
                 //console.log("TOUCH X:" + event.touches[0].screenX + " Y:" + event.touches[0].screenY);
-                for (var i = 0, t; i < event.changedTouches.length; i++) {
-                    t = event.changedTouches[i];
-                    this.touches[t.identifier] = {
-                        tx: t.screenX,
-                        ty: t.screenY,
-                        txd: t.screenX,
-                        tyd: t.screenY
-                    };
-                }
+                // for (var i = 0, t; i < event.changedTouches.length; i++) {
+                //     t = event.changedTouches[i];
+                //     this.touches[t.identifier] = {
+                //         tx: t.screenX,
+                //         ty: t.screenY,
+                //         txd: t.screenX,
+                //         tyd: t.screenY
+                //     };
+                // }
                 return true;
             },
 
             onTouchMoveHandler: function onTouchMoveHandler(event) {
                 //console.log("TOUCH TO X:" + event.touches[0].screenX + " Y:" + event.touches[0].screenY);
                 // update current touch positions
-                for (var i = 0, t; i < event.changedTouches.length; i++) {
-                    t = event.changedTouches[i];
-                    this.touches[t.identifier].tx = t.screenX;
-                    this.touches[t.identifier].ty = t.screenY;
-                }
-
-                // process touch events and update last touch positions
-                for (var i in this.touches) {
-                    // (left side) drag left/right to rotate
-                    if (this.touches[i].tx < window.innerWidth * 0.5) {
-                        this.player.heading -= (this.touches[i].txd - this.touches[i].tx) * GameHandler.frameMultipler;
-                    }
-                    // (right side) drag up to thrust
-                    else if (this.touches[i].ty < this.touches[i].tyd) {
-                        this.player.thrust();
-                    }
-                    // (right side) flick down for shield
-                    else if (this.touches[i].ty - 16 > this.touches[i].tyd) {
-                        this.player.activateShield();
-                    }
-
-                    this.touches[i].txd = this.touches[i].tx;
-                    this.touches[i].tyd = this.touches[i].ty;
-                }
+                // for (var i = 0, t; i < event.changedTouches.length; i++) {
+                //     t = event.changedTouches[i];
+                //     this.touches[t.identifier].tx = t.screenX;
+                //     this.touches[t.identifier].ty = t.screenY;
+                // }
+                //
+                // // process touch events and update last touch positions
+                // for (var i in this.touches) {
+                //     // (left side) drag left/right to rotate
+                //     if (this.touches[i].tx < window.innerWidth * 0.5) {
+                //         this.player.heading -= (this.touches[i].txd - this.touches[i].tx) * GameHandler.frameMultipler;
+                //     }
+                //     // (right side) drag up to thrust
+                //     else if (this.touches[i].ty < this.touches[i].tyd) {
+                //         this.player.thrust();
+                //     }
+                //     // (right side) flick down for shield
+                //     else if (this.touches[i].ty - 16 > this.touches[i].tyd) {
+                //         this.player.activateShield();
+                //     }
+                //
+                //     this.touches[i].txd = this.touches[i].tx;
+                //     this.touches[i].tyd = this.touches[i].ty;
+                // }
 
                 return true;
             },
 
             onTouchEndHandler: function onTouchEndHandler(event) {
                 //console.log("TOUCH END:" + event.touches.length);
-                for (var i = 0, t; i < event.changedTouches.length; i++) {
-                    t = event.changedTouches[i];
-                    delete this.touches[t.identifier];
-                }
+                // for (var i = 0, t; i < event.changedTouches.length; i++) {
+                //     t = event.changedTouches[i];
+                //     delete this.touches[t.identifier];
+                // }
                 return true;
             },
 
