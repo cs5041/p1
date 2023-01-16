@@ -319,23 +319,25 @@ class LineBreakTransformer {
 }
 
 const serialRead = async (port, reader, callback) => {
-    while (port.readable) {
-        try {
-            while (true) {
-                const {value, done} = await reader.read();
-                if (done) {
-                    reader.releaseLock();
-                    break;
+    if (port && reader) {
+        while (port.readable) {
+            try {
+                while (true) {
+                    const {value, done} = await reader.read();
+                    if (done) {
+                        reader.releaseLock();
+                        break;
+                    }
+                    if (value) {
+                        console.log('input', value)
+                        callback(value);
+                    }
                 }
-                if (value) {
-                    console.log('input', value)
-                    callback(value);
-                }
+            } catch (error) {
+                console.log(error);
+            } finally {
+                reader.releaseLock();
             }
-        } catch (error) {
-            console.log(error);
-        } finally {
-            reader.releaseLock();
         }
     }
 }
@@ -344,6 +346,8 @@ const serialWrite = async (port, writer, data) => {
     if (port && writer) {
         console.log('output', data)
         await writer.write(data + '\n');
+    } else {
+        console.log('simulated output', data)
     }
 }
 
@@ -407,6 +411,7 @@ const serialWrite = async (port, writer, data) => {
         {
             game: null,
             start: false,
+            force: false,
             imagesLoaded: false,
             sine: 0,
             mult: 0,
@@ -422,7 +427,7 @@ const serialWrite = async (port, writer, data) => {
              * Scene completion polling method
              */
             isComplete: function isComplete() {
-                return this.start && this.game.port && this.game.reader && this.game.writer;
+                return this.start && (this.force || (this.game.port && this.game.reader && this.game.writer));
             },
 
             onInitScene: function onInitScene() {
@@ -576,6 +581,15 @@ const serialWrite = async (port, writer, data) => {
                     //     return true;
                     //     break;
                     // }
+
+                    case GameHandler.KEY.F: {
+                        if (this.imagesLoaded) {
+                            this.start = true;
+                            this.force = true
+                        }
+                        return true;
+                        break;
+                    }
 
                     case GameHandler.KEY.S: {
                         GameHandler.soundEnabled = !GameHandler.soundEnabled;
