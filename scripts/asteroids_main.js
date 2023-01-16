@@ -328,7 +328,7 @@ const serialRead = async (port, reader, callback) => {
                     break;
                 }
                 if (value) {
-                    console.log('input', data)
+                    console.log('input', value)
                     callback(value);
                 }
             }
