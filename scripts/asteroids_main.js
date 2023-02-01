@@ -874,21 +874,21 @@ const serialWrite = async (port, writer, data) => {
                                 const t = parseFloat(command[1]);
                                 if (!isNaN(t) && t !== 0) {
                                     this.input.thrust = t;
-                                } else {
+                                } else if (!isNaN(t) && t === 0) {
                                     this.input.thrust = false;
                                 }
                                 break;
                             case 'l': //left
                                 if (command[1] === '1') {
                                     this.input.left = true;
-                                } else {
+                                } else if (command[1] === '0') {
                                     this.input.left = false;
                                 }
                                 break;
                             case 'r': //right
                                 if (command[1] === '1') {
                                     this.input.right = true;
-                                } else {
+                                } else if (command[1] === '0') {
                                     this.input.right = false;
                                 }
                                 break;
@@ -907,21 +907,21 @@ const serialWrite = async (port, writer, data) => {
                             case 'a': //primary weapon
                                 if (command[1] === '1') {
                                     this.input.fireA = true;
-                                } else {
+                                } else if (command[1] === '0') {
                                     this.input.fireA = false;
                                 }
                                 break;
                             case 'b': //secondary weapon
                                 if (command[1] === '1') {
                                     this.input.fireB = true;
-                                } else {
+                                } else if (command[1] === '0') {
                                     this.input.fireB = false;
                                 }
                                 break;
                             case 's': //shield
                                 if (command[1] === '1') {
                                     this.input.shield = true;
-                                } else {
+                                } else if (command[1] === '0') {
                                     this.input.shield = false;
                                 }
                                 break;
@@ -969,7 +969,7 @@ const serialWrite = async (port, writer, data) => {
                             case 'u': //pause set value
                                 if (command[1] === '1') {
                                     GameHandler.pause(1);
-                                } else {
+                                } else if (command[1] === '0') {
                                     GameHandler.pause(0);
                                 }
                                 break;
