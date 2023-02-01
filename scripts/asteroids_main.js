@@ -663,8 +663,7 @@ const serialWrite = async (port, writer, data) => {
                             ['a', this.player.alive ? 1 : 0],
                             ['l', this.game.lives],
                             ['s', this.game.score],
-                            ['d', 'o'],
-                            ['p', GameHandler.paused ? 1 : 0],
+                            ['d', 'o']
                         ]
                         outputData.forEach((el) => {
                             const data = `${el[0]}:${el[1]}`
@@ -733,8 +732,7 @@ const serialWrite = async (port, writer, data) => {
                             ['a', this.player.alive ? 1 : 0],
                             ['l', this.game.lives],
                             ['s', this.game.score],
-                            ['d', 'c'],
-                            ['p', GameHandler.paused ? 1 : 0],
+                            ['d', 'c']
                         ]
                         outputData.forEach((el) => {
                             const data = `${el[0]}:${el[1]}`
@@ -968,7 +966,7 @@ const serialWrite = async (port, writer, data) => {
                                     this.player.energyRechargeFactor = er;
                                 }
                                 break;
-                            case 'pa': //pause
+                            case 'u': //pause set value
                                 if (command[1] === '1') {
                                     GameHandler.pause(1);
                                 } else {
@@ -1024,8 +1022,7 @@ const serialWrite = async (port, writer, data) => {
                         ['a', this.player.alive ? 1 : 0],
                         ['l', this.game.lives],
                         ['s', this.game.score],
-                        ['d', 'g'],
-                        ['p', GameHandler.paused ? 1 : 0],
+                        ['d', 'g']
                     ]
                     outputData.forEach((el) => {
                         const data = `${el[0]}:${el[1]}`
