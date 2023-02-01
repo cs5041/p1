@@ -663,7 +663,8 @@ const serialWrite = async (port, writer, data) => {
                             ['a', this.player.alive ? 1 : 0],
                             ['l', this.game.lives],
                             ['s', this.game.score],
-                            ['d', 'o']
+                            ['d', 'o'],
+                            ['p', GameHandler.paused ? 1 : 0],
                         ]
                         outputData.forEach((el) => {
                             const data = `${el[0]}:${el[1]}`
@@ -732,7 +733,8 @@ const serialWrite = async (port, writer, data) => {
                             ['a', this.player.alive ? 1 : 0],
                             ['l', this.game.lives],
                             ['s', this.game.score],
-                            ['d', 'c']
+                            ['d', 'c'],
+                            ['p', GameHandler.paused ? 1 : 0],
                         ]
                         outputData.forEach((el) => {
                             const data = `${el[0]}:${el[1]}`
@@ -966,6 +968,13 @@ const serialWrite = async (port, writer, data) => {
                                     this.player.energyRechargeFactor = er;
                                 }
                                 break;
+                            case 'pa': //pause
+                                if (command[1] === '1') {
+                                    GameHandler.pause(1);
+                                } else {
+                                    GameHandler.pause(0);
+                                }
+                                break;
                         }
                     }
                 });
@@ -1015,7 +1024,8 @@ const serialWrite = async (port, writer, data) => {
                         ['a', this.player.alive ? 1 : 0],
                         ['l', this.game.lives],
                         ['s', this.game.score],
-                        ['d', 'g']
+                        ['d', 'g'],
+                        ['p', GameHandler.paused ? 1 : 0],
                     ]
                     outputData.forEach((el) => {
                         const data = `${el[0]}:${el[1]}`

@@ -156,13 +156,27 @@ var GameHandler =
         /**
          * Game pause toggle method.
          */
-        pause: function () {
-            if (this.paused) {
-                this.paused = false;
-                GameHandler.frameStart = Date.now();
-                GameHandler.game.frame.call(GameHandler.game);
+        pause: function (state) {
+            if (state === 1 || state === 0) {
+                if (state === 1) {
+                    if (!this.paused) {
+                        this.paused = true;
+                    }
+                } else {
+                    if (this.paused) {
+                        this.paused = false;
+                        GameHandler.frameStart = Date.now();
+                        GameHandler.game.frame.call(GameHandler.game);
+                    }
+                }
             } else {
-                this.paused = true;
+                if (this.paused) {
+                    this.paused = false;
+                    GameHandler.frameStart = Date.now();
+                    GameHandler.game.frame.call(GameHandler.game);
+                } else {
+                    this.paused = true;
+                }
             }
         },
 
